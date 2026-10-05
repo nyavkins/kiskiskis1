@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#222321">
+	<title>Йогурт скискискискис</title>
+	<style>
+		:root {
+			color-scheme: dark;
+			--paper: #f7f4ec;
+			--dark: #242523;
+		}
+
+		* { box-sizing: border-box; }
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+			background: var(--dark);
+		}
+
+		body {
+			color: var(--paper);
+			font-family: Impact, "Arial Narrow", Arial, sans-serif;
+		}
+
+		.page {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			min-height: 100svh;
+			overflow: hidden;
+			isolation: isolate;
+			background: #000;
+		}
+
+		.page::before,
+		.page::after {
+			display: none;
+		}
+
+		.haze {
+			position: absolute;
+			z-index: -1;
+			inset: -10%;
+			background:
+				radial-gradient(ellipse at 45% 34%, rgba(255,255,255,.26), transparent 34%),
+				radial-gradient(ellipse at 36% 70%, rgba(14,18,18,.6), transparent 28%);
+			filter: blur(28px);
+			animation: haze-drift 9s ease-in-out infinite alternate;
+		}
+
+		.wordmark {
+			position: absolute;
+			z-index: 2;
+			top: 2.5%;
+			left: 50%;
+			margin: 0;
+			color: #fffdf5;
+			font-size: clamp(3.7rem, 14vw, 7.4rem);
+			font-weight: 900;
+			line-height: .9;
+			letter-spacing: 0;
+			text-shadow: 0 0 10px rgba(255,255,255,.56), 0 0 34px rgba(255,255,255,.36);
+			transform: translateX(-50%);
+			white-space: nowrap;
+		}
+
+		.marquee {
+			position: absolute;
+			z-index: 3;
+			top: 31%;
+			left: 50%;
+			width: max-content;
+			max-width: 100%;
+			transform: translateX(-50%);
+		}
+
+		.marquee-track {
+			width: auto;
+		}
+
+		.reveal-button {
+			position: absolute;
+			top: 51%;
+			left: 50%;
+			min-height: 48px;
+			padding: 0 22px;
+			border: 1px solid rgba(255,248,226,.8);
+			border-radius: 3px;
+			background: linear-gradient(180deg, #fff9e9, #e8dcc5);
+			box-shadow: 0 5px 24px rgba(255,244,214,.18), inset 0 1px 0 #fff;
+			color: #211d16;
+			font-family: "Arial Narrow", Arial, sans-serif;
+			font-size: .9rem;
+			font-weight: 800;
+			letter-spacing: 0;
+			cursor: pointer;
+			transform: translateX(-50%);
+			transition: transform .18s ease, box-shadow .18s ease;
+		}
+
+		.reveal-button:hover {
+			box-shadow: 0 7px 30px rgba(255,244,214,.28), inset 0 1px 0 #fff;
+			transform: translateX(-50%) translateY(-2px);
+		}
+
+		.reveal-button:focus-visible {
+			outline: 2px solid #fff9e9;
+			outline-offset: 4px;
+		}
+
+		.marquee-copy {
+			flex: none;
+			padding-right: .28em;
+			color: transparent;
+			font-size: clamp(2.45rem, 9.5vw, 5.3rem);
+			font-weight: 700;
+			line-height: 1.1;
+			letter-spacing: 0;
+			white-space: nowrap;
+			-webkit-text-stroke: 1.4px rgba(255,255,255,.92);
+			text-shadow: 0 0 12px rgba(255,255,255,.24);
+		}
+
+		.intro {
+			position: absolute;
+			inset: 0;
+			transition: opacity .3s ease;
+		}
+
+		.cat-photo {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: min(90vw, 82vh);
+			max-height: 82vh;
+			object-fit: contain;
+			opacity: 0;
+			pointer-events: none;
+			transform: translate(-50%, -48%) scale(.96);
+			transition: opacity .45s ease, transform .45s ease;
+		}
+
+		.page.show-cat .intro {
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		.page.show-cat .cat-photo {
+			opacity: 1;
+			transform: translate(-50%, -50%) scale(1);
+		}
+
+		.rule {
+			position: absolute;
+			z-index: 2;
+			top: 81.5%;
+			left: 11%;
+			width: 76%;
+			height: 4px;
+			background: rgba(255,255,255,.9);
+			box-shadow: 0 0 8px rgba(255,255,255,.4);
+			transform: rotate(2.2deg);
+			transform-origin: left center;
+		}
+
+		.controls {
+			position: absolute;
+			z-index: 4;
+			right: 25%;
+			bottom: 8.2%;
+			display: flex;
+			align-items: center;
+			gap: clamp(14px, 3.1vw, 26px);
+			color: rgba(255,255,255,.85);
+			font-family: "Arial Narrow", Arial, sans-serif;
+			font-size: clamp(.65rem, 2vw, 1rem);
+			font-weight: 800;
+			letter-spacing: .08em;
+			transform: rotate(2deg);
+		}
+
+		.control-mark { opacity: .9; }
+
+		.play-button {
+			display: grid;
+			width: clamp(34px, 6vw, 48px);
+			aspect-ratio: 1;
+			place-items: center;
+			padding: 0;
+			border: 3px solid rgba(239,139,124,.95);
+			border-radius: 50%;
+			background: rgba(10,10,10,.35);
+			color: #fff;
+			cursor: pointer;
+			box-shadow: 0 0 12px rgba(239,139,124,.35), inset 0 0 8px rgba(255,255,255,.12);
+		}
+
+		.play-button:focus-visible {
+			outline: 2px solid white;
+			outline-offset: 5px;
+		}
+
+		.play-icon {
+			width: 0;
+			height: 0;
+			margin-left: 3px;
+			border-top: 8px solid transparent;
+			border-bottom: 8px solid transparent;
+			border-left: 12px solid currentColor;
+		}
+
+		.play-button[aria-pressed="true"] .play-icon {
+			width: 10px;
+			height: 14px;
+			margin: 0;
+			border: 0;
+			border-right: 3px solid currentColor;
+			border-left: 3px solid currentColor;
+		}
+
+		.page.paused .marquee-track,
+		.page.paused .haze { animation-play-state: paused; }
+
+		@keyframes ticker {
+			to { transform: translateX(-50%); }
+		}
+
+		@keyframes haze-drift {
+			from { transform: translate3d(-1%, 0, 0) scale(1); }
+			to { transform: translate3d(1.5%, -1%, 0) scale(1.06); }
+		}
+
+		@keyframes photo-in {
+			to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+		}
+
+		@media (max-width: 480px) {
+			.controls { right: 23%; bottom: 8%; gap: 12px; }
+			.rule { top: 82%; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+		}
+	</style>
+</head>
+<body>
+	<main class="page" id="page" aria-label="Йогурт">
+		<section class="intro" id="intro" aria-label="Йогурт скискискискис">
+			<h1 class="wordmark">ЙОГУРТ</h1>
+			<div class="marquee" aria-label="Скискискискис">
+				<div class="marquee-track">
+					<span class="marquee-copy">СКИСКИСКИСКИС</span>
+				</div>
+			</div>
+			<button class="reveal-button" id="revealButton" type="button">ПОКАЗАТЬ КОТА</button>
+		</section>
+		<img class="cat-photo" id="catPhoto" src="1638041559_41-koshka-top-p-kot-v-smetane-51.jpg" alt="Кот в миске со сметаной">
+	</main>
+	<script>
+		const page = document.querySelector("#page");
+		const revealButton = document.querySelector("#revealButton");
+
+		revealButton.addEventListener("click", () => {
+			page.classList.add("show-cat");
+		});
+	</script>
+</body>
+</html>
